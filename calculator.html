@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simple Calculator</title>
+<style>
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #5a1020, #2a060d);
+    color: #f6ecd6;
+  }
+  form {
+    width: 340px;
+    max-width: 92vw;
+    padding: 28px;
+    background: rgba(246, 236, 214, 0.08);
+    border: 3px solid #e3bd72;
+    border-radius: 20px;
+    box-shadow: 0 0 22px rgba(227, 189, 114, 0.5);
+  }
+  h1 { margin: 0 0 20px; font-size: 1.7rem; text-align: center; color: #e3bd72; }
+  label { display: block; margin: 14px 0 6px; font-weight: bold; }
+  input, select {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.1rem;
+    border: 2px solid #e3bd72;
+    border-radius: 8px;
+    background: #f6ecd6;
+    color: #2a060d;
+  }
+  .ops { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; }
+  button {
+    padding: 12px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .op { background: #e3bd72; color: #2a060d; }
+  .op:hover { background: #f1cf8d; }
+  #clear {
+    width: 100%;
+    margin-top: 12px;
+    font-size: 1rem;
+    background: transparent;
+    color: #f6ecd6;
+    border: 2px solid #f6ecd6;
+  }
+  #result { background: #fff; font-weight: bold; }
+  #message { min-height: 1.3em; margin: 10px 0 0; color: #ffb3b3; font-size: .95rem; }
+</style>
+</head>
+<body>
+  <form id="calcForm">
+    <h1>Simple Calculator</h1>
+
+    <label for="num1">First number</label>
+    <input type="number" id="num1" step="any" placeholder="Enter first number">
+
+    <label for="num2">Second number</label>
+    <input type="number" id="num2" step="any" placeholder="Enter second number">
+
+    <div class="ops">
+      <button type="button" class="op" data-op="add" title="Addition">+</button>
+      <button type="button" class="op" data-op="sub" title="Subtraction">&minus;</button>
+      <button type="button" class="op" data-op="mul" title="Multiplication">&times;</button>
+      <button type="button" class="op" data-op="div" title="Division">&divide;</button>
+    </div>
+    <button type="button" id="clear">Clear</button>
+
+    <p id="message" role="alert"></p>
+
+    <label for="result">Result</label>
+    <input type="text" id="result" readonly>
+  </form>
+
+<script>
+  const form = document.getElementById("calcForm");
+  const num1 = document.getElementById("num1");
+  const num2 = document.getElementById("num2");
+  const result = document.getElementById("result");
+  const message = document.getElementById("message");
+
+  function calculate(operation) {
+    message.textContent = "";
+    result.value = "";
+
+    if (num1.value === "" || num2.value === "") {
+      message.textContent = "Please enter both numbers.";
+      return;
+    }
+
+    const a = parseFloat(num1.value);
+    const b = parseFloat(num2.value);
+    let answer;
+
+    switch (operation) {
+      case "add": answer = a + b; break;
+      case "sub": answer = a - b; break;
+      case "mul": answer = a * b; break;
+      case "div":
+        if (b === 0) {
+          message.textContent = "Cannot divide by zero.";
+          return;
+        }
+        answer = a / b;
+        break;
+    }
+
+    // Round to avoid values like 0.30000000000000004
+    result.value = parseFloat(answer.toFixed(10));
+  }
+
+  form.addEventListener("submit", function (e) { e.preventDefault(); });
+
+  document.querySelectorAll(".op").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      calculate(btn.dataset.op);
+    });
+  });
+
+  document.getElementById("clear").addEventListener("click", function () {
+    form.reset();
+    result.value = "";
+    message.textContent = "";
+    num1.focus();
+  });
+</script>
+</body>
+</html>
